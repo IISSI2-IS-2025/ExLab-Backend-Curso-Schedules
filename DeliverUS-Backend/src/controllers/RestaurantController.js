@@ -73,7 +73,41 @@ const show = async function (req, res) {
 }
 
 const showWithActiveProducts = async function (req, res) {
-  res.status(500).send('To be implemented')
+  try {
+    const now = new Date().toTimeString().split(' ')[0] // 'HH:mm:ss'
+
+    const restaurant = await Restaurant.findByPk(req.params.restaurantId, {
+      attributes: { exclude: ['userId'] },
+      include: [
+        {
+          model: Product,
+          as: 'products',
+          required: false,
+          include: [
+            { model: ProductCategory, as: 'productCategory' },
+            {
+              model: Schedule,
+              as: 'schedule',
+              required: true,
+              where: {
+                startTime: { [Op.lte]: now },
+                endTime: { [Op.gt]: now }
+              }
+            }
+          ]
+        },
+        {
+          model: RestaurantCategory,
+          as: 'restaurantCategory'
+        }
+      ],
+      order: [[{ model: Product, as: 'products' }, 'order', 'ASC']]
+    })
+
+    res.json(restaurant)
+  } catch (err) {
+    res.status(500).send(err)
+  }
 }
 
 const update = async function (req, res) {

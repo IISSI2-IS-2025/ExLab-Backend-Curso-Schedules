@@ -48,6 +48,17 @@ module.exports = {
           key: 'id'
         }
       },
+      scheduleId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: {
+            tableName: 'Schedules'
+          },
+          key: 'id'
+        },
+        onDelete: 'SET NULL'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

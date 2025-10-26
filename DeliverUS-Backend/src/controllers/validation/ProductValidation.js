@@ -16,11 +16,30 @@ const checkRestaurantExists = async (value, { req }) => {
 }
 
 const checkScheduleBelongsToRestaurantOnCreate = async (value, { req }) => {
+  if (!value) return Promise.resolve() // Permitir scheduleId vacío
 
+  const schedule = await Schedule.findByPk(value)
+  if (!schedule) {
+    return Promise.reject(new Error('The scheduleId does not exist.'))
+  }
+  if (schedule.restaurantId !== req.body.restaurantId) {
+    return Promise.reject(new Error('The scheduleId does not belong to the given restaurantId.'))
+  }
+  return Promise.resolve()
 }
 
 const checkScheduleBelongsToRestaurantOnUpdate = async (value, { req }) => {
+  if (!value) return Promise.resolve() // Permitir scheduleId vacío
 
+  const schedule = await Schedule.findByPk(value)
+  if (!schedule) {
+    return Promise.reject(new Error('The scheduleId does not exist.'))
+  }
+  const product = await Product.findByPk(req.params.productId)
+  if (product.restaurantId !== schedule.restaurantId) {
+    return Promise.reject(new Error('The scheduleId does not belong to the restaurant of this product.'))
+  }
+  return Promise.resolve()
 }
 
 const create = [

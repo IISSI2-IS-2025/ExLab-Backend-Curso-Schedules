@@ -16,6 +16,7 @@ const loadModel = (sequelize, DataTypes) => {
       Product.belongsTo(models.Restaurant, { foreignKey: 'restaurantId', as: 'restaurant', onDelete: 'cascade' })
       Product.belongsTo(models.ProductCategory, { foreignKey: 'productCategoryId', as: 'productCategory' })
       Product.belongsToMany(models.Order, { as: 'orders', through: OrderProducts })
+      Product.belongsTo(models.Schedule, { foreignKey: 'scheduleId', as: 'schedule', onDelete: 'set null' })
     }
   }
   Product.init({
@@ -26,7 +27,8 @@ const loadModel = (sequelize, DataTypes) => {
     order: DataTypes.INTEGER,
     availability: DataTypes.BOOLEAN,
     restaurantId: DataTypes.INTEGER,
-    productCategoryId: DataTypes.INTEGER
+    productCategoryId: DataTypes.INTEGER,
+    scheduleId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Product'
